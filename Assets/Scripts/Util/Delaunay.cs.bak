@@ -1,0 +1,240 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+public class UDelaunayResult
+{
+    /// <summary>
+    /// 三角形列表
+    /// </summary>
+    public List<Vector2[]> Triangles;
+    /// <summary>
+    /// 边列表
+    /// </summary>
+    public List<Vector2[]> Edges;
+    /// <summary>
+    /// 顶点列表
+    /// </summary>
+    public List<Vector2> Vertexes;
+}
+
+public class UDelaunay
+{
+    public static UDelaunayResult GetTriangles2D(List<Vector2> _vertexes) 
+    {
+        UDelaunayResult result = new UDelaunayResult();
+        List<Vector2[]> triangles = new List<Vector2[]>();
+        List<Vector2[]> edges = new List<Vector2[]>();
+        List<Vector2[]> super = new List<Vector2[]>();
+        //> 找到最小和最大的点
+        float minX=0, minY=0, maxX=0, maxY=0; 
+        foreach (var v in _vertexes) 
+        {
+            if (v.x < minX) minX = v.x;
+            if (v.y < minY) minY = v.y;
+            if (v.x > maxX) maxX = v.x;
+            if (v.y > maxY) maxY = v.y;
+        } 
+        minX -= 10;
+        minY -= 10;
+        maxX += 10;
+        maxY += 10;
+
+        //> 创建超级三角形
+        Vector2 leftUp = new Vector2(minX,maxY);
+        Vector2 rightUp = new Vector2(maxX, maxY);
+        Vector2 rightDown = new Vector2(maxX, minY);
+        Vector2 leftDown = new Vector2(minX, minY);
+        //> 为了确保所有的点都包含在三角形内
+        //> 这里使用了两个超级三角形拼成的矩形
+        super.Add(GetTriangle(leftUp, rightUp,   rightDown));
+        super.Add(GetTriangle(leftUp, rightDown, leftDown ));
+        triangles.AddRange(super);
+
+        foreach ( var v in _vertexes )
+            AddVertex(triangles,v);
+
+        for (int i = 0; i < triangles.Count; i++) 
+        {
+            if (ContainAnyone(triangles[i], super))
+            {
+                triangles.RemoveAt(i--);
+            }
+        }
+        result.Triangles = triangles;
+        result.Vertexes = _vertexes;
+        result.Edges = GetEdgeFromTriangles(triangles);
+        return result;
+    }
+
+    static List<Vector2[]> GetEdgeFromTriangles(List<Vector2[]> _triangles)
+    {
+        List<Vector2[]> result = new List<Vector2[]>();
+
+        for (int i = 0; i < _triangles.Count; i++) 
+        {
+            var t0 = _triangles[i];
+            AddEdge(t0[0], t0[1], result);
+            AddEdge(t0[0], t0[2], result);
+            AddEdge(t0[1], t0[2], result);
+        }
+        return result;
+    }
+
+    static void AddEdge(Vector2 _from, Vector2 _to, List<Vector2[]> _result) 
+    {
+        for (int i = 0; i < _result.Count; i++) 
+        {
+            var v = _result[i];
+            if (IsDoubleSide(_from, _to, v[0], v[1])) return;  
+        }
+
+        _result.Add(GetEdge(_from, _to));
+    }
+
+    //> 三角形内是否包含超级三角形中的任意一点
+    static bool ContainAnyone(Vector2[] _triangle,List<Vector2[]> _supers) 
+    {
+        for (int i = 0; i < _triangle.Length; i++) 
+        {
+            Vector2 v = _triangle[i];
+            for (int n = 0; n < _supers.Count; n++) 
+            {
+                Vector2[] sv = _supers[n];
+                for (int m = 0; m < sv.Length; m++) 
+                {
+                    if (v == sv[m]) return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    static void AddVertex(List<Vector2[]> _triangles, Vector2 _newVertex) 
+    {
+        List<Vector2[]> edges = new List<Vector2[]>();
+
+        for (int i = 0; i < _triangles.Count; i++) 
+        {
+            Vector2[] t0 = _triangles[i];
+            if (Inside(t0, _newVertex))
+            {
+                _triangles.RemoveAt(i--);
+                edges.Add(GetEdge(t0[0], t0[1]));
+                edges.Add(GetEdge(t0[0], t0[2]));
+                edges.Add(GetEdge(t0[1], t0[2]));
+            }
+        }
+
+        for (int i = 0; i < edges.Count; i++) 
+        {
+            var ei = edges[i];
+            for (int n = i+1; n < edges.Count; n++) 
+            {
+                var en = edges[n];
+                if (IsDoubleSide(ei[0], ei[1], en[0], en[1])) 
+                {
+                    edges.RemoveAt(n);
+                    edges.RemoveAt(i--);
+                    break;
+                }
+            }
+        }
+
+        foreach (var v in edges) 
+        {
+            _triangles.Add(GetTriangle(v[0], v[1], _newVertex));
+        }
+    }
+
+    //> 是否是双边
+    static bool IsDoubleSide(Vector2 _a0,Vector2 _a1,Vector2 _b0,Vector2 _b1) 
+    {
+        float x = 0, y = 0;
+        x += _a0.x - _b0.x;
+        y += _a0.y - _b0.y;
+        x += _a1.x - _b1.x;
+        y += _a1.y - _b1.y;
+        return x == 0 &amp;&amp; y == 0;
+    }
+
+    static Vector2[] GetEdge(Vector2 _a, Vector2 _b) 
+    {
+        Vector2[] result = new Vector2[2];
+        result[0] = _a;
+        result[1] = _b;
+        return result;
+    }
+
+    static Vector2[] GetTriangle(Vector2 _a, Vector2 _b, Vector2 _c) 
+    {
+        Vector2[] result = new Vector2[3];
+        result[0] = _a;
+        result[1] = _b;
+        result[2] = _c;
+        return result;
+    }
+
+    static bool Inside(Vector2[] _triangle, Vector2 _newVertex) 
+    {
+        //> 求三角形任意两边垂直平分线
+        Vector2[] t01 = GetBisector(_triangle[0],_triangle[1]);
+        Vector2[] t02 = GetBisector(_triangle[0],_triangle[2]);
+
+        //> 求圆心
+        Vector2 circelPoint = LineIntersection(t01[0],t01[1],t02[0],t02[1]);
+
+        //> 求圆心半径
+        float r = Vector2.Distance(_triangle[0],circelPoint);
+        float r2 = Vector2.Distance(_newVertex, circelPoint);
+
+        //> 检测是否在圆内 
+        return r2 <= r;
+    }
+
+    //> 获取任意线段的焦点
+    static Vector2 LineIntersection(Vector3 p0, Vector3 p1, Vector3 e0, Vector3 e1)
+    { 
+        return get_line_intersection(p0.x, p0.y, p1.x, p1.y, e0.x, e0.y, e1.x, e1.y);
+         
+    }
+
+    static Vector2 get_line_intersection(float p0_x, float p0_y, float p1_x, float p1_y,
+    float p2_x, float p2_y, float p3_x, float p3_y)
+    { 
+        float s02_x, s02_y, s10_x, s10_y, s32_x, s32_y, t_numer, denom, t;
+        s10_x = p1_x - p0_x;
+        s10_y = p1_y - p0_y;
+        s32_x = p3_x - p2_x;
+        s32_y = p3_y - p2_y;
+
+        denom = s10_x * s32_y - s32_x * s10_y;  
+        s02_x = p0_x - p2_x;
+        s02_y = p0_y - p2_y;
+        //s_numer = s10_x * s02_y - s10_y * s02_x; 
+        t_numer = s32_x * s02_y - s32_y * s02_x; 
+        t = t_numer / denom;
+        Vector2 v;
+        v.x = p0_x + (t * s10_x);
+        v.y = p0_y + (t * s10_y); 
+        return v;
+    }
+    //> 获取任意线段的垂直平分线
+    static Vector2[] GetBisector(Vector2 _a, Vector2 _b)
+    {
+        float rotate = Mathf.PI / 2;
+        Vector2 a = _b - _a;
+        _a -= a;
+        _b += a;
+        Vector2[] r = new Vector2[2];
+        Vector2 half = _a + (_b - _a) / 2;
+        r[0].x = _a.x * Mathf.Cos(rotate) - _a.y * Mathf.Sin(rotate);
+        r[0].y = _a.x * Mathf.Sin(rotate) + _a.y * Mathf.Cos(rotate);
+        r[1].x = _b.x * Mathf.Cos(rotate) - _b.y * Mathf.Sin(rotate);
+        r[1].y = _b.x * Mathf.Sin(rotate) + _b.y * Mathf.Cos(rotate);
+        r[0].x += half.x * (1 - Mathf.Cos(rotate)) + half.y * Mathf.Sin(rotate);
+        r[0].y += half.y * (1 - Mathf.Cos(rotate)) - half.x * Mathf.Sin(rotate);
+        r[1].x += half.x * (1 - Mathf.Cos(rotate)) + half.y * Mathf.Sin(rotate);
+        r[1].y += half.y * (1 - Mathf.Cos(rotate)) - half.x * Mathf.Sin(rotate);
+        return r;
+    }
+}
