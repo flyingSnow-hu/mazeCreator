@@ -3,6 +3,7 @@ Shader "Unlit/GridTex"
     Properties
     {
         _MainTex ("Main Texture", 2D) = "white" {}
+        _MainColor ("Main Color", Color) = (1,1,1,1)
         _Walls("Walls", Float) = 0
     }
     SubShader
@@ -31,6 +32,7 @@ Shader "Unlit/GridTex"
             };
 
             sampler2D _MainTex;
+            fixed4 _MainColor;
             float4 _MainTex_ST;
             half _Walls;
 
@@ -45,6 +47,7 @@ Shader "Unlit/GridTex"
             fixed4 frag (v2f i) : SV_Target
             {
                 fixed4 col = tex2D(_MainTex, i.uv);
+                col.rgb = col.rgb * _MainColor.rgb;
                 return col;
             }
             ENDCG

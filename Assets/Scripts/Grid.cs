@@ -16,9 +16,8 @@ public enum Bound
 public enum GridState
 {
     Unchecked = 0,
-    Solution = 1,
-    NotRight = 2,
-    Blocked = 3
+    Way = 1,
+    Blocked = 2
 }
 
 [RequireComponent(typeof(Renderer))]
@@ -48,13 +47,10 @@ public class Grid : MonoBehaviour
             _state = value;
             // switch(_state)
             // {
-            //     case GridState.Unchecked:
-            //         renderer.material.SetColor("_MainColor", Color.yellow);
-            //         break;
-            //     case GridState.Solution:
+            //     case GridState.Way:
             //         renderer.material.SetColor("_MainColor", Color.green);
             //         break;
-            //     case GridState.NotRight:
+            //     case GridState.Blocked:
             //         renderer.material.SetColor("_MainColor", Color.gray);
             //         break;
             //     default:                    

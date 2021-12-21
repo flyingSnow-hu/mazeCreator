@@ -9,8 +9,8 @@ public class GridMazeView : MonoBehaviour
     [SerializeField] private Transform gridRoot;
     private List<Grid> grids;
     private SearchEngine se;
-    private int columnCount = 20;
-    private int rowCount = 20;
+    private int columnCount = 15;
+    private int rowCount = 15;
 
     private float lastTime = 99999999;
 

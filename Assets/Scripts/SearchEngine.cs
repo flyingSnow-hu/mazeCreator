@@ -2,8 +2,15 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class SearchEngine
 {
+    public class Accumulated
+    {
+        public float branchThreshold = 0;
+        public float straightThreshold = 0;
+    }
+
     private Vector2Int[] directions = new Vector2Int[]{
         Vector2Int.left,
         Vector2Int.up,
@@ -22,8 +29,8 @@ public class SearchEngine
     private Action<int, int, Bound> addWall;
     private Action<int, int, Bound> addWay;
     private LinkedList<Vector2Int> path;
-    // private bool getSolution = false;
-    private int searched = 0;
+
+    private Dictionary<Vector2Int, Accumulated> accumulated;
 
     public SearchEngine(int columns, int rows, 
             int startX, int startY, int endX, int endY, 
@@ -45,8 +52,29 @@ public class SearchEngine
 
         path = new LinkedList<Vector2Int>();
         path.AddLast(new Vector2Int(startX, startY));
-        setGridState(startX, startY, GridState.Solution);
+        setGridState(startX, startY, GridState.Way);
 
+        accumulated = new Dictionary<Vector2Int, Accumulated>(columns * rows);
+    }
+
+    public void SetProbabilities(Vector2Int pos, Accumulated a)
+    {
+        if(accumulated.ContainsKey(pos))
+        {
+            accumulated[pos] = a;
+        }else
+        {
+            accumulated.Add(pos, a);
+        }
+    }
+
+    public Accumulated GetProbabilities(Vector2Int pos)
+    {
+        if(!accumulated.ContainsKey(pos))
+        {
+            accumulated.Add(pos, new Accumulated());
+        }
+        return accumulated[pos];
     }
 
     public bool DoSearch()
@@ -54,6 +82,7 @@ public class SearchEngine
         if (path.Count == 0) return true;
 
         var crnt = path.Last.Value;
+        Accumulated probabilities = GetProbabilities(crnt);
         ShuffleDirections();
         foreach (var direction in directions)
         {
@@ -61,31 +90,29 @@ public class SearchEngine
             var gridState = getGridState(next.x, next.y);
             if(gridState == GridState.Unchecked)
             {
-                searched++;
-                setGridState(next.x, next.y, GridState.Solution);
+                var nextProb = GetProbabilities(next);
+                setGridState(next.x, next.y, GridState.Way);
                 addWay(crnt.x, crnt.y, GetWallType(direction));
                 addWay(next.x, next.y, GetWallType(-direction));
-                if(searched < (this.columns*this.rows) * 0.1f)
-                {
-                    // 倾向于长路线
-                    path.AddLast(next);
-                }
-                else 
-                if(UnityEngine.Random.value > 0.3)
-                {
-                    // 倾向于长路线
-                    path.AddLast(next);
-                }else
+                // 积累分岔概率，随着路线伸长而增加，在分岔的位置清零
+                // 积累转向概率，随着路线伸长而增加，在转向的位置清零
+                if(UnityEngine.Random.value < probabilities.branchThreshold)
                 {
                     // 倾向于分叉
                     path.AddFirst(next);
+                    SetProbabilities(next, new Accumulated());
+                }else
+                {
+                    // 倾向于长路线
+                    path.AddLast(next);
+                    nextProb.branchThreshold = GetProbabilities(crnt).branchThreshold + 0.1f;
                 }
                 return false;
             } 
         }
 
         // 需要回溯
-        setGridState(crnt.x, crnt.y, GridState.Solution);            
+        setGridState(crnt.x, crnt.y, GridState.Blocked);
         path.RemoveLast();
 
         return false;
