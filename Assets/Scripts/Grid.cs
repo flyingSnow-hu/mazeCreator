@@ -15,9 +15,10 @@ public enum Bound
 
 public enum GridState
 {
-    Unchecked = 0,
-    Way = 1,
-    Blocked = 2
+    Unconnected = 0,
+    Connected = 1,
+    Solution = 2,
+    NotSolution = 3,
 }
 
 [RequireComponent(typeof(Renderer))]
@@ -26,16 +27,12 @@ public class Grid : MonoBehaviour
     [SerializeField]private Texture2D[] gridTexs;
 
     private new Renderer renderer;
-    public Bound Walls
-    {
-        get; private set;
-    } = Bound.None;
     public Bound Ways
     {
         get; private set;
     } = Bound.None;
 
-    private GridState _state = GridState.Unchecked;
+    private GridState _state = GridState.Unconnected;
     public GridState state
     {
         get
@@ -45,18 +42,18 @@ public class Grid : MonoBehaviour
         set
         {
             _state = value;
-            // switch(_state)
-            // {
-            //     case GridState.Way:
-            //         renderer.material.SetColor("_MainColor", Color.green);
-            //         break;
-            //     case GridState.Blocked:
-            //         renderer.material.SetColor("_MainColor", Color.gray);
-            //         break;
-            //     default:                    
-            //         renderer.material.SetColor("_MainColor", Color.white);
-            //         break;
-            // }
+            switch(_state)
+            {
+                case GridState.Solution:
+                    renderer.material.SetColor("_MainColor", Color.yellow);
+                    break;
+                case GridState.Connected:
+                    renderer.material.SetColor("_MainColor", Color.white);
+                    break;
+                default:                    
+                    renderer.material.SetColor("_MainColor", Color.white);
+                    break;
+            }
         }
         
     }
@@ -67,12 +64,10 @@ public class Grid : MonoBehaviour
     }
 
 
-    public void AddWall(Bound wall)
+    public void Reset()
     {
-        // Walls = (Walls | wall) & ((~Ways) & (Bound)0xf);
-
-
-        // renderer.material.SetTexture("_MainTex", gridTexs[(int)(~Ways) & 0xf]);
+        Ways = Bound.None;
+        renderer.material.SetTexture("_MainTex", gridTexs[(int)(~Ways) & 0xf]);
     }
 
 
