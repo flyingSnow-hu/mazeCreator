@@ -31,7 +31,6 @@ public class PrimSearchEngine:ISearchEngine
     private Action<int, int, Bound> addWall;
     private Action<int, int, Bound> addWay;
     private LinkedList<Vector2Int> path;
-    private bool hasReachEnd = false;
 
     // private Dictionary<Vector2Int, Accumulated> accumulated;
 
@@ -62,18 +61,16 @@ public class PrimSearchEngine:ISearchEngine
     {
         if (path.Count == 0) return true;
 
-        var crntNode = path.Last;
-        if (hasReachEnd){
-            crntNode = path.First;
-            var selected = URandom.Range(0, path.Count);
-            for (int i = 0; i < selected; i++)
-            {
-                crntNode = crntNode.Next;
-            }
+        var crntNode = path.First;
+        var selected = URandom.Range(0, path.Count);
+        for (int i = 0; i < selected; i++)
+        {
+            crntNode = crntNode.Next;
         }
 
         var crnt = crntNode.Value;
-        ShuffleDirections();
+        // ShuffleDirections();
+        CentripetalDirections(crnt);
         foreach (var direction in directions)
         {
             var next = crnt + direction;
@@ -85,11 +82,6 @@ public class PrimSearchEngine:ISearchEngine
                 addWay(next.x, next.y, Directions.Direction2Bound(-direction));
                 path.AddLast(next);
 
-                if (next.x == endX && next.y == endY)
-                {
-                    hasReachEnd = true;
-                }
-
                 return false;
             } 
         }
@@ -100,33 +92,127 @@ public class PrimSearchEngine:ISearchEngine
         return false;
     }
 
-    // private Bound GetWallType(Vector2Int direction)
+    // public void ShuffleDirections(Vector2 pos)
     // {
-    //     if(direction.x > 0){
-    //         return Bound.Right;
-    //     }else if (direction.x < 0)
+
+    //     int n = directions.Length;
+    //     while (n > 1) 
     //     {
-    //         return Bound.Left;
-    //     }else if(direction.y > 0)
-    //     {
-    //         return Bound.Top;
-    //     }else if (direction.y < 0)
-    //     {
-    //         return Bound.Bottom;
+    //         int k = URandom.Range(0, n);
+    //         Vector2Int temp = directions[n - 1];
+    //         directions[n - 1] = directions[k];
+    //         directions[k] = temp;
+    //         n--;
     //     }
-    //     return Bound.None;
     // }
 
-    public void ShuffleDirections()
+    public void CentripetalDirections(Vector2Int pos)
     {
-        int n = directions.Length;
-        while (n > 1) 
+        Vector2Int direction = new Vector2Int(columns << 2, rows <<2) - pos;
+        if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
         {
-            int k = URandom.Range(0, n);
-            Vector2Int temp = directions[n - 1];
-            directions[n - 1] = directions[k];
-            directions[k] = temp;
-            n--;
+            // 横向优先
+            if(direction.x < 0)
+            {
+                directions[0] = Vector2Int.left;
+                directions[3] = Vector2Int.right;
+            }else
+            {
+                directions[0] = Vector2Int.right;
+                directions[3] = Vector2Int.left;
+            }
+
+            if(direction.y < 0)
+            {
+                directions[1] = Vector2Int.down;
+                directions[2] = Vector2Int.up;
+            }else
+            {
+                directions[1] = Vector2Int.up;
+                directions[2] = Vector2Int.down;
+            }
+        }else
+        {
+            // 纵向优先
+            if(direction.y < 0)
+            {
+                directions[0] = Vector2Int.down;
+                directions[3] = Vector2Int.up;
+            }else
+            {
+                directions[0] = Vector2Int.up;
+                directions[3] = Vector2Int.down;
+            }
+
+            if(direction.x < 0)
+            {
+                directions[1] = Vector2Int.left;
+                directions[2] = Vector2Int.right;
+            }else
+            {
+                directions[1] = Vector2Int.right;
+                directions[2] = Vector2Int.left;
+            }
         }
     }
+
+    // public static Bound GetRandomDirection(Vector2 pos, )
+    // {
+    //     Bound[] bounds = new Bound[4]{Bound.Left, Bound.Top, Bound.Right, Bound.Bottom};
+    //     float[] weights = new float[4]{pos.x, pos.y, 1-pos.x, 1-pos.y};
+
+    //     float value = URandom.value * 2;
+    //     for (int i = 0; i < weights.Length; i++)
+    //     {
+    //         value = value - weights[i];
+    //         if (value <= 0) return bounds[i];
+    //     }
+    //     return Bound.Bottom;
+
+        // if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
+        // {
+        //     // 横向优先
+        //     if(direction.x < 0)
+        //     {
+        //         bounds[0] = Bound.Left;
+        //         bounds[3] = Bound.Right;
+        //     }else
+        //     {
+        //         bounds[0] = Bound.Right;
+        //         bounds[3] = Bound.Left;
+        //     }
+
+        //     if(direction.y < 0)
+        //     {
+        //         bounds[1] = Bound.Bottom;
+        //         bounds[2] = Bound.Top;
+        //     }else
+        //     {
+        //         bounds[1] = Bound.Top;
+        //         bounds[2] = Bound.Bottom;
+        //     }
+        // }else
+        // {
+        //     // 纵向优先
+        //     if(direction.y < 0)
+        //     {
+        //         bounds[0] = Bound.Bottom;
+        //         bounds[3] = Bound.Top;
+        //     }else
+        //     {
+        //         bounds[0] = Bound.Top;
+        //         bounds[3] = Bound.Bottom;
+        //     }
+
+        //     if(direction.x < 0)
+        //     {
+        //         bounds[1] = Bound.Left;
+        //         bounds[2] = Bound.Right;
+        //     }else
+        //     {
+        //         bounds[1] = Bound.Right;
+        //         bounds[2] = Bound.Left;
+        //     }
+        // }
+    // }
 }

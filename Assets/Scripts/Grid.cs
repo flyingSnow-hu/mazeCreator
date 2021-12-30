@@ -25,6 +25,8 @@ public enum GridState
 public class Grid : MonoBehaviour
 {
     [SerializeField]private Texture2D[] gridTexs;
+    [SerializeField]public TextMesh branch;
+    [SerializeField]public TextMesh distance;
 
     private new Renderer renderer;
     public Bound Ways
@@ -42,18 +44,18 @@ public class Grid : MonoBehaviour
         set
         {
             _state = value;
-            switch(_state)
-            {
-                case GridState.Solution:
-                    renderer.material.SetColor("_MainColor", Color.yellow);
-                    break;
-                case GridState.Connected:
-                    renderer.material.SetColor("_MainColor", Color.white);
-                    break;
-                default:                    
-                    renderer.material.SetColor("_MainColor", Color.white);
-                    break;
-            }
+            // switch(_state)
+            // {
+            //     case GridState.Solution:
+            //         renderer.material.SetColor("_MainColor", Color.yellow);
+            //         break;
+            //     case GridState.Connected:
+            //         renderer.material.SetColor("_MainColor", Color.white);
+            //         break;
+            //     default:                    
+            //         renderer.material.SetColor("_MainColor", Color.white);
+            //         break;
+            // }
         }
         
     }

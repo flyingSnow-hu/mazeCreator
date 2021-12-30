@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public static class Directions
@@ -34,5 +35,26 @@ public static class Directions
             return Vector2Int.down;
         }
         return Vector2Int.zero;
+    }
+    
+    public static Bound InverseBound(Bound bound)
+    {
+        switch(bound)
+        {
+            case Bound.Left:
+                return Bound.Right;
+            case Bound.Right:
+                return Bound.Left;
+            case Bound.Top:
+                return Bound.Bottom;
+            case Bound.Bottom:
+                return Bound.Top;
+        }
+        return Bound.None;
+    }
+
+    internal static bool IsSingle(Bound way)
+    {
+        return way == Bound.Left || way == Bound.Top || way == Bound.Right || way == Bound.Bottom;
     }
 }
