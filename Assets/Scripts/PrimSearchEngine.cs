@@ -32,8 +32,6 @@ public class PrimSearchEngine:ISearchEngine
     private Action<int, int, Bound> addWay;
     private LinkedList<Vector2Int> path;
 
-    // private Dictionary<Vector2Int, Accumulated> accumulated;
-
     public PrimSearchEngine(int columns, int rows, 
             int startX, int startY, int endX, int endY, 
             Action<int, int, Bound> addWay,
@@ -61,6 +59,8 @@ public class PrimSearchEngine:ISearchEngine
     {
         if (path.Count == 0) return true;
 
+        ShufflePaths();
+
         var crntNode = path.First;
         var selected = URandom.Range(0, path.Count);
         for (int i = 0; i < selected; i++)
@@ -69,8 +69,8 @@ public class PrimSearchEngine:ISearchEngine
         }
 
         var crnt = crntNode.Value;
-        // ShuffleDirections();
-        CentripetalDirections(crnt);
+        ShuffleDirections();
+        // CentripetalDirections(crnt);
         foreach (var direction in directions)
         {
             var next = crnt + direction;
@@ -92,19 +92,23 @@ public class PrimSearchEngine:ISearchEngine
         return false;
     }
 
-    // public void ShuffleDirections(Vector2 pos)
-    // {
+    public void ShufflePaths()
+    {
+        
+    }
 
-    //     int n = directions.Length;
-    //     while (n > 1) 
-    //     {
-    //         int k = URandom.Range(0, n);
-    //         Vector2Int temp = directions[n - 1];
-    //         directions[n - 1] = directions[k];
-    //         directions[k] = temp;
-    //         n--;
-    //     }
-    // }
+    public void ShuffleDirections()
+    {
+        int n = directions.Length;
+        while (n > 1) 
+        {
+            int k = URandom.Range(0, n);
+            Vector2Int temp = directions[n - 1];
+            directions[n - 1] = directions[k];
+            directions[k] = temp;
+            n--;
+        }
+    }
 
     public void CentripetalDirections(Vector2Int pos)
     {
@@ -155,64 +159,4 @@ public class PrimSearchEngine:ISearchEngine
             }
         }
     }
-
-    // public static Bound GetRandomDirection(Vector2 pos, )
-    // {
-    //     Bound[] bounds = new Bound[4]{Bound.Left, Bound.Top, Bound.Right, Bound.Bottom};
-    //     float[] weights = new float[4]{pos.x, pos.y, 1-pos.x, 1-pos.y};
-
-    //     float value = URandom.value * 2;
-    //     for (int i = 0; i < weights.Length; i++)
-    //     {
-    //         value = value - weights[i];
-    //         if (value <= 0) return bounds[i];
-    //     }
-    //     return Bound.Bottom;
-
-        // if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
-        // {
-        //     // 横向优先
-        //     if(direction.x < 0)
-        //     {
-        //         bounds[0] = Bound.Left;
-        //         bounds[3] = Bound.Right;
-        //     }else
-        //     {
-        //         bounds[0] = Bound.Right;
-        //         bounds[3] = Bound.Left;
-        //     }
-
-        //     if(direction.y < 0)
-        //     {
-        //         bounds[1] = Bound.Bottom;
-        //         bounds[2] = Bound.Top;
-        //     }else
-        //     {
-        //         bounds[1] = Bound.Top;
-        //         bounds[2] = Bound.Bottom;
-        //     }
-        // }else
-        // {
-        //     // 纵向优先
-        //     if(direction.y < 0)
-        //     {
-        //         bounds[0] = Bound.Bottom;
-        //         bounds[3] = Bound.Top;
-        //     }else
-        //     {
-        //         bounds[0] = Bound.Top;
-        //         bounds[3] = Bound.Bottom;
-        //     }
-
-        //     if(direction.x < 0)
-        //     {
-        //         bounds[1] = Bound.Left;
-        //         bounds[2] = Bound.Right;
-        //     }else
-        //     {
-        //         bounds[1] = Bound.Right;
-        //         bounds[2] = Bound.Left;
-        //     }
-        // }
-    // }
 }

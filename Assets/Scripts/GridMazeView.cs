@@ -173,7 +173,7 @@ public class GridMazeView : MonoBehaviour
             var target1 = crnt + Directions.Bound2Direction(direction1);
             var dScore1 = -1; 
             var index1 = target1.x + target1.y * columnCount;
-            if(target1.x >= 0 && target1.x < columnCount && target1.y >= 0 && target1.y < rowCount && branchGroup[index1] == branchGroup[index])
+            if(target1.x >= 0 && target1.x < columnCount && target1.y >= 0 && target1.y < rowCount && branchGroup[index1] == branchGroup[index] && Directions.IsSingle(grids[index1].Ways))
             { 
                 dScore1 = Mathf.Abs(distances[index1] - score);
                 if (Directions.IsSingle(grids[index1].Ways))
@@ -185,7 +185,7 @@ public class GridMazeView : MonoBehaviour
             var target2 = crnt + Directions.Bound2Direction(direction2);
             var dScore2 = -1; 
             var index2 = target2.x + target2.y * columnCount;
-            if(target2.x >= 0 && target2.x < columnCount && target2.y >= 0 && target2.y < rowCount && branchGroup[index2] == branchGroup[index]) 
+            if(target2.x >= 0 && target2.x < columnCount && target2.y >= 0 && target2.y < rowCount && branchGroup[index2] == branchGroup[index] && Directions.IsSingle(grids[index2].Ways))
             {
                 dScore2 = Mathf.Abs(distances[index2] - score);
                 if (Directions.IsSingle(grids[index2].Ways))
@@ -197,7 +197,7 @@ public class GridMazeView : MonoBehaviour
             var target3 = crnt + Directions.Bound2Direction(direction3);
             var dScore3 = -1; 
             var index3 = target3.x + target3.y * columnCount;
-            if(target3.x >= 0 && target3.x < columnCount && target3.y >= 0 && target3.y < rowCount && branchGroup[index3] == branchGroup[index])
+            if(target3.x >= 0 && target3.x < columnCount && target3.y >= 0 && target3.y < rowCount && branchGroup[index3] == branchGroup[index] && Directions.IsSingle(grids[index3].Ways))
             { 
                 dScore3 = Mathf.Abs(distances[index3] - score);
                 if (Directions.IsSingle(grids[index3].Ways))
