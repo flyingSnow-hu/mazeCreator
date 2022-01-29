@@ -20,7 +20,7 @@ public class GridMazeView : MonoBehaviour
         CreateGrids(columnCount, rowCount);
         se = new PrimSearchEngine(columnCount, rowCount,
             0, 0, columnCount - 1, rowCount - 1,
-            AddWay, GetGridState, SetGridState);
+            AddWay, GetWay, GetGridState, SetGridState);
     }
 
     private void CreateGrids(int columns, int rows)
@@ -60,6 +60,15 @@ public class GridMazeView : MonoBehaviour
         {
             grids[y * columnCount + x].AddWay(way);
         }
+    }
+
+    private Bound GetWay(int x, int y)
+    {
+        if (x >= 0 && x < columnCount && y >= 0 && y < rowCount)
+        {
+            return grids[y * columnCount + x].Ways;
+        }
+        return Bound.None;
     }
 
     public void OnResetClick()
@@ -265,7 +274,7 @@ public class GridMazeView : MonoBehaviour
         CreateGrids(columnCount, rowCount);
         se = new PrimSearchEngine(columnCount, rowCount,
             0, 0, columnCount - 1, rowCount - 1,
-            AddWay, GetGridState, SetGridState);
+            AddWay, GetWay, GetGridState, SetGridState);
         nextTime = 999999;
     }
 
