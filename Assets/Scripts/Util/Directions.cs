@@ -3,58 +3,58 @@ using UnityEngine;
 
 public static class Directions
 {  
-    public static Bound Direction2Bound(Vector2Int direction)
+    public static Direction Direction2Bound(Vector2Int direction)
     {
         if(direction.x > 0){
-            return Bound.Right;
+            return Direction.Right;
         }else if (direction.x < 0)
         {
-            return Bound.Left;
+            return Direction.Left;
         }else if(direction.y > 0)
         {
-            return Bound.Top;
+            return Direction.Top;
         }else if (direction.y < 0)
         {
-            return Bound.Bottom;
+            return Direction.Bottom;
         }
-        return Bound.None;
+        return Direction.None;
     }
     
-    public static Vector2Int Bound2Direction(Bound bound)
+    public static Vector2Int Bound2Direction(Direction bound)
     {
-        if((bound & Bound.Left) > 0){
+        if((bound & Direction.Left) > 0){
             return Vector2Int.left;
-        }else if ((bound & Bound.Right) > 0)
+        }else if ((bound & Direction.Right) > 0)
         {
             return Vector2Int.right;
-        }else if ((bound & Bound.Top) > 0)
+        }else if ((bound & Direction.Top) > 0)
         {
             return Vector2Int.up;
-        }else if ((bound & Bound.Bottom) > 0)
+        }else if ((bound & Direction.Bottom) > 0)
         {
             return Vector2Int.down;
         }
         return Vector2Int.zero;
     }
     
-    public static Bound InverseBound(Bound bound)
+    public static Direction InverseBound(Direction bound)
     {
         switch(bound)
         {
-            case Bound.Left:
-                return Bound.Right;
-            case Bound.Right:
-                return Bound.Left;
-            case Bound.Top:
-                return Bound.Bottom;
-            case Bound.Bottom:
-                return Bound.Top;
+            case Direction.Left:
+                return Direction.Right;
+            case Direction.Right:
+                return Direction.Left;
+            case Direction.Top:
+                return Direction.Bottom;
+            case Direction.Bottom:
+                return Direction.Top;
         }
-        return Bound.None;
+        return Direction.None;
     }
 
-    internal static bool IsSingle(Bound way)
+    internal static bool IsSingle(Direction way)
     {
-        return way == Bound.Left || way == Bound.Top || way == Bound.Right || way == Bound.Bottom;
+        return way == Direction.Left || way == Direction.Top || way == Direction.Right || way == Direction.Bottom;
     }
 }

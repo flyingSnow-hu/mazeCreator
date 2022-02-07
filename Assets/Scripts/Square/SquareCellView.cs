@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Flags]
-public enum Bound
+public enum Direction
 {
     None = 0,
     Left = 1,
@@ -13,29 +13,21 @@ public enum Bound
     Bottom = 8
 }
 
-public enum GridState
-{
-    Unconnected = 0,
-    Connected = 1,
-    Solution = 2,
-    NotSolution = 3,
-}
-
 [RequireComponent(typeof(Renderer))]
-public class Grid : MonoBehaviour
+public class SquareCellView : MonoBehaviour
 {
     [SerializeField]private Texture2D[] gridTexs;
     [SerializeField]public TextMesh branch;
     [SerializeField]public TextMesh distance;
 
     private new Renderer renderer;
-    public Bound Ways
+    public Direction Ways
     {
         get; private set;
-    } = Bound.None;
+    } = Direction.None;
 
-    private GridState _state = GridState.Unconnected;
-    public GridState state
+    private CellState _state = CellState.Unconnected;
+    public CellState state
     {
         get
         {
@@ -46,10 +38,10 @@ public class Grid : MonoBehaviour
             _state = value;
             // switch(_state)
             // {
-            //     case GridState.Solution:
+            //     case CellState.Solution:
             //         renderer.material.SetColor("_MainColor", Color.yellow);
             //         break;
-            //     case GridState.Connected:
+            //     case CellState.Connected:
             //         renderer.material.SetColor("_MainColor", Color.white);
             //         break;
             //     default:                    
@@ -68,12 +60,12 @@ public class Grid : MonoBehaviour
 
     public void Reset()
     {
-        Ways = Bound.None;
+        Ways = Direction.None;
         renderer.material.SetTexture("_MainTex", gridTexs[(int)(~Ways) & 0xf]);
     }
 
 
-    public void AddWay(Bound way)
+    public void AddWay(Direction way)
     {
         Ways = Ways | way;
         renderer.material.SetTexture("_MainTex", gridTexs[(int)(~Ways) & 0xf]);
