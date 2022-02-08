@@ -10,10 +10,12 @@ public class PrimSearchEngine:ISearchEngine
     private MazeViewBase maze;
     private LinkedList<CellModelBase> path;
 
-    public PrimSearchEngine(MazeViewBase maze, CellModelBase start)
+    public PrimSearchEngine(MazeViewBase maze)
     {
         this.maze = maze;
         path = new LinkedList<CellModelBase>();
+
+        var start = maze.GetRandomCell();
         path.AddLast(start);
         start.State = CellState.Connected;
     }
@@ -46,20 +48,21 @@ public class PrimSearchEngine:ISearchEngine
 
     public LinkedListNode<CellModelBase> GetRandomNode()
     {
-        var ret = path.First;
-        var retGrid = ret.Value;
-        int retType = retGrid.GetWayCount();
-
-        var crnt = ret.Next;
-        var counts = new int[2];
-        counts[retType] = 1;
-
-        var weights = new int[2];
+        // 岔路权重
         int branch = 1;
+        var weights = new int[3];
         weights[0] = 0;
         weights[1] = 100 - branch;
         weights[2] = branch;
 
+        // 第一个节点
+        var ret = path.First;
+        var retGrid = ret.Value;
+        int retType =  Mathf.Clamp(retGrid.GetWayCount(), 0, weights.Length - 1);
+
+        var crnt = ret.Next;
+        var counts = new int[weights.Length];
+        counts[retType] = 1;
         var summed_weight = weights[retType];
 
         while(crnt != null)

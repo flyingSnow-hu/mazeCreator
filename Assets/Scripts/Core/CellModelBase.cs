@@ -13,5 +13,4 @@ public abstract class CellModelBase
     public virtual CellState State { get; set;}
 
     public abstract int GetWayCount();
-    // public abstract CellModelBase[] GetNeighbours();
 }

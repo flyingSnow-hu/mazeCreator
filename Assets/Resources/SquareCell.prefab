@@ -205,10 +205,27 @@ MonoBehaviour:
   m_GameObject: {fileID: 4662359720671493390}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: daa77038206479544962a5381dfd4508, type: 3}
+  m_Script: {fileID: 11500000, guid: d735f388bd63bc64a9723d3c871194bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridTexs: []
+  gridTexs:
+  - {fileID: 2800000, guid: e48cd3eeeed8768439d1ba87c18105a7, type: 3}
+  - {fileID: 2800000, guid: 8561da42fa17d3b47a7314ead539c558, type: 3}
+  - {fileID: 2800000, guid: 1d2f1973f3177844b9e0e5907a64333d, type: 3}
+  - {fileID: 2800000, guid: 2e9dc43961988ee4e8531d8a2fa188a1, type: 3}
+  - {fileID: 2800000, guid: 0657030e5e5187944a8410f9ac252f48, type: 3}
+  - {fileID: 2800000, guid: 5d2c9c5f2d91d4c4498275c850df5a78, type: 3}
+  - {fileID: 2800000, guid: b3ff929baea840a43b1943fc375a5d87, type: 3}
+  - {fileID: 2800000, guid: f35551013a0f8bd4c8ff6a53c35a9b35, type: 3}
+  - {fileID: 2800000, guid: 5f46df8319e1b6e46bcc3f0ded8228c0, type: 3}
+  - {fileID: 2800000, guid: 07a2c01ea7300fc49869199a49dcf497, type: 3}
+  - {fileID: 2800000, guid: 6bfd0988ac003fe498fb3393c91c4dc9, type: 3}
+  - {fileID: 2800000, guid: 1a5a52860df102e4ab16e27e0b36984a, type: 3}
+  - {fileID: 2800000, guid: b7caf38774d16f84b9e40606095dc8a2, type: 3}
+  - {fileID: 2800000, guid: c47e2b060f9eda74e925e2b004b09152, type: 3}
+  - {fileID: 2800000, guid: 5235c0a81b0034a41824a2c0134ce6f1, type: 3}
+  - {fileID: 2800000, guid: c37f185aa781a2c4ab8f7663123dd429, type: 3}
+  - {fileID: 2800000, guid: b7a764ee596383340a0769c7c8e88a1e, type: 3}
   branch: {fileID: 4169341109606131977}
   distance: {fileID: 923053670531167209}
 --- !u!1 &8005095718062012819

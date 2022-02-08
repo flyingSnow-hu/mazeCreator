@@ -21,10 +21,10 @@ public class SquareCellView : MonoBehaviour
     [SerializeField]public TextMesh distance;
 
     private new Renderer renderer;
-    public Direction Ways
-    {
-        get; private set;
-    } = Direction.None;
+    // public Direction Ways
+    // {
+    //     get; private set;
+    // } = Direction.None;
 
     private CellState _state = CellState.Unconnected;
     public CellState state
@@ -57,17 +57,8 @@ public class SquareCellView : MonoBehaviour
         renderer = GetComponent<Renderer>();
     }
 
-
-    public void Reset()
+    public void SetWays(Direction ways)
     {
-        Ways = Direction.None;
-        renderer.material.SetTexture("_MainTex", gridTexs[(int)(~Ways) & 0xf]);
-    }
-
-
-    public void AddWay(Direction way)
-    {
-        Ways = Ways | way;
-        renderer.material.SetTexture("_MainTex", gridTexs[(int)(~Ways) & 0xf]);
+        renderer.material.SetTexture("_MainTex", gridTexs[(int)(~ways) & 0xf]);
     }
 }

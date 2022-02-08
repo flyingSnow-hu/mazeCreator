@@ -148,7 +148,7 @@ Transform:
   m_GameObject: {fileID: 40381315}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3
@@ -1387,13 +1387,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1959629202}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9fe76a8f1244f924288c76699d4d14c0, type: 3}
+  m_Script: {fileID: 11500000, guid: 18823dd85e787704ea0dd4f10188c8f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   CellPrefab: {fileID: 4662359720671493390, guid: 20d117ef00a9d8443bff1f8c8936e8fa, type: 3}
   gridRoot: {fileID: 40381316}
-  columnCount: 30
-  rowCount: 30
+  columnCount: 15
+  rowCount: 15
 --- !u!1 &2031392543
 GameObject:
   m_ObjectHideFlags: 0

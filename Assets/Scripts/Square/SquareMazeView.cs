@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using URandom = UnityEngine.Random;
 
 public class SquareMazeView : MazeViewBase
 {
@@ -14,7 +15,8 @@ public class SquareMazeView : MazeViewBase
     {
         cells = new List<SquareCellView>(64);
         cellModels = new List<SquareCellModel>(64);
-        CreateGrids(columnCount, rowCount);
+        // CreateGrids(columnCount, rowCount);
+        Reset();
     }
 
     private void CreateGrids(int columns, int rows)
@@ -51,7 +53,7 @@ public class SquareMazeView : MazeViewBase
             cellModels = new List<SquareCellModel>(totalCount);
         }
 
-        se = new PrimSearchEngine(this, cellModels[0]);
+        se = new PrimSearchEngine(this);
     }
 
     private int GetIndex(int x, int y)
@@ -61,8 +63,13 @@ public class SquareMazeView : MazeViewBase
 
     public override CellModelBase[] GetNeighbours(CellModelBase cell)
     {
+        var sCell = (SquareCellModel)cell;
         var neighbours = new List<CellModelBase>(4);
-        if(cell.x > 0) neighbours.Add(cellModels);
+        if(sCell.x > 0) neighbours.Add(cellModels[GetIndex(sCell.x - 1, sCell.y)]);
+        if(sCell.x < columnCount - 1) neighbours.Add(cellModels[GetIndex(sCell.x + 1, sCell.y)]);
+        if(sCell.y > 0) neighbours.Add(cellModels[GetIndex(sCell.x, sCell.y - 1)]);
+        if(sCell.y < rowCount - 1) neighbours.Add(cellModels[GetIndex(sCell.x, sCell.y + 1)]);
+        return neighbours.ToArray();
     }
 
     public override void AddWay(CellModelBase cell1, CellModelBase cell2)
@@ -90,52 +97,55 @@ public class SquareMazeView : MazeViewBase
             sCell1.AddWay(Direction.Bottom);
             sCell2.AddWay(Direction.Top);
         }
+        UpdateCell(sCell1);
+        UpdateCell(sCell2);
     }
 
-    // private Bound GetWay(int x, int y)
-    // {
-    //     if (x >= 0 && x < columnCount && y >= 0 && y < rowCount)
-    //     {
-    //         return cells[y * columnCount + x].Ways;
-    //     }
-    //     return Bound.None;
-    // }
+    private void UpdateCell(SquareCellModel cellModel)
+    {
+        cells[GetIndex(cellModel.x, cellModel.y)].SetWays(cellModel.Way);
+    }
 
     public void OnSolveClick()
     {
         // x, y, direction
-        LinkedList<Vector3Int> gridLinkedList = new LinkedList<Vector3Int>();
-        gridLinkedList.AddLast(new Vector3Int(0,0,1));
-        while(gridLinkedList.Count > 0)
-        {
-            var last = gridLinkedList.Last.Value;
-            if(last.x == columnCount - 1 && last.y == rowCount - 1) return;
+        // LinkedList<CellModelBase> gridLinkedList = new LinkedList<CellModelBase>();
+        // gridLinkedList.AddLast(cellModels[0]);
+        // while(gridLinkedList.Count > 0)
+        // {
+        //     var last = gridLinkedList.Last.Value;
+        //     if(last.x == columnCount - 1 && last.y == rowCount - 1) return;
 
-            var grid = cells[last.x + last.y * columnCount];
-            var way = (Direction)last.z;
-            while(way <= Direction.Bottom)
-            {
-                if ((grid.Ways & way) != Direction.None) 
-                {
-                    var direction = Directions.Bound2Direction(way);
-                    int newX = last.x + direction.x, newY = last.y + direction.y;
-                    if (cells[newX + newY * columnCount].state == CellState.Connected)
-                    {
-                        last.z = (int)way; gridLinkedList.Last.Value = last;
-                        gridLinkedList.AddLast(new Vector3Int(newX, newY, 1));
-                        cells[newX + newY * columnCount].state = CellState.Solution;
-                        goto OuterLoop;
-                    }
-                }
-                way = (Direction)((int)way << 1);
-            }
+        //     var grid = cells[last.x + last.y * columnCount];
+        //     var way = (Direction)last.z;
+        //     while(way <= Direction.Bottom)
+        //     {
+        //         if ((grid.Ways & way) != Direction.None) 
+        //         {
+        //             var direction = Directions.Bound2Direction(way);
+        //             int newX = last.x + direction.x, newY = last.y + direction.y;
+        //             if (cells[newX + newY * columnCount].state == CellState.Connected)
+        //             {
+        //                 last.z = (int)way; gridLinkedList.Last.Value = last;
+        //                 gridLinkedList.AddLast(new Vector3Int(newX, newY, 1));
+        //                 cells[newX + newY * columnCount].state = CellState.Solution;
+        //                 goto OuterLoop;
+        //             }
+        //         }
+        //         way = (Direction)((int)way << 1);
+        //     }
 
-            // 回溯
-            gridLinkedList.RemoveLast();
-            grid.state = CellState.NotSolution;
+        //     // 回溯
+        //     gridLinkedList.RemoveLast();
+        //     grid.state = CellState.NotSolution;
 
-            OuterLoop:;
-        }
+        //     OuterLoop:;
+        // }
+    }
+
+    public override CellModelBase GetRandomCell()
+    {
+        return cellModels[GetIndex(URandom.Range(0, columnCount), URandom.Range(0, rowCount))];
     }
 
     // public void CreateCycle()

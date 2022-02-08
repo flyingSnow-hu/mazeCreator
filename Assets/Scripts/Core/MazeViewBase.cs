@@ -18,18 +18,19 @@ public abstract class MazeViewBase:MonoBehaviour
     public void OnStepClick()
     {
         se.DoSearch();
-        nextTime = 999999;
+        nextTime = Time.time + 999999;
     }
+
+    public abstract CellModelBase GetRandomCell();
 
     public void OnEndClick()
     {
         nextTime = Time.time + 0.5f;
     }
 
-    private void Reset()
+    protected void Reset()
     {        
-        nextTime = 999999;        
-        // se = new PrimSearchEngine(AddWay, cellModels[0]);
+        nextTime = Time.time + 999999;        
         CreateCells();
     }
 
@@ -43,8 +44,12 @@ public abstract class MazeViewBase:MonoBehaviour
     {
         if (Time.time > nextTime)
         {
-            se.DoSearch();
-            nextTime = Time.time + 0.01f;
+            if (se.DoSearch())
+            {
+                nextTime = Time.time + 999999;
+            }else{
+                nextTime = Time.time + 0.01f;
+            }
         }
     }
 }

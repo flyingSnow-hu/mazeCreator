@@ -2,7 +2,7 @@ public class SquareCellModel : CellModelBase
 {
     public int x { get; private set; }
     public int y { get; private set; }
-    private Direction Way { get; set; } = 0;
+    public Direction Way { get; private set; } = Direction.None;
     
 
 
