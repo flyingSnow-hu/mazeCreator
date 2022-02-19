@@ -20,11 +20,9 @@ public class SquareCellView : MonoBehaviour
     [SerializeField]public TextMesh branch;
     [SerializeField]public TextMesh distance;
 
+    public SquareCellModel Model {get;private set;}
+
     private new Renderer renderer;
-    // public Direction Ways
-    // {
-    //     get; private set;
-    // } = Direction.None;
 
     private CellState _state = CellState.Unconnected;
     public CellState state
@@ -55,6 +53,11 @@ public class SquareCellView : MonoBehaviour
     private void Awake()
     {
         renderer = GetComponent<Renderer>();
+    }
+
+    public void SetPos(int x, int y)
+    {
+        Model = new SquareCellModel(x, y);
     }
 
     public void SetWays(Direction ways)

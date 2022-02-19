@@ -6,7 +6,6 @@ using URandom = UnityEngine.Random;
 
 public class SquareMazeView : MazeViewBase
 {
-    protected List<SquareCellModel> cellModels;
     protected List<SquareCellView> cells;
     [SerializeField] private int columnCount = 15;
     [SerializeField] private int rowCount = 15;
@@ -14,8 +13,6 @@ public class SquareMazeView : MazeViewBase
     private void Start()
     {
         cells = new List<SquareCellView>(64);
-        cellModels = new List<SquareCellModel>(64);
-        // CreateGrids(columnCount, rowCount);
         Reset();
     }
 
@@ -28,8 +25,9 @@ public class SquareMazeView : MazeViewBase
             for (int x = 0; x < columns; x++)
             {
                 var grid = GameObject.Instantiate<GameObject>(CellPrefab, new Vector3(x - halfWidth + 0.5f, y - halfHeight + 0.5f, 0), Quaternion.identity, gridRoot);
-                cells.Add(grid.GetComponent<SquareCellView>());
-                cellModels.Add(new SquareCellModel(x, y));
+                var cellView = grid.GetComponent<SquareCellView>();
+                cells.Add(cellView);
+                cellView.SetPos(x, y);
             }
         }
     }
@@ -45,12 +43,10 @@ public class SquareMazeView : MazeViewBase
                 GameObject.Destroy(cells[i].gameObject);
             }
             cells.Clear();
-            cellModels.Clear();
             CreateGrids(columnCount, rowCount);
         }
         else{
             cells = new List<SquareCellView>(totalCount);
-            cellModels = new List<SquareCellModel>(totalCount);
         }
 
         se = new PrimSearchEngine(this);
@@ -65,10 +61,10 @@ public class SquareMazeView : MazeViewBase
     {
         var sCell = (SquareCellModel)cell;
         var neighbours = new List<CellModelBase>(4);
-        if(sCell.x > 0) neighbours.Add(cellModels[GetIndex(sCell.x - 1, sCell.y)]);
-        if(sCell.x < columnCount - 1) neighbours.Add(cellModels[GetIndex(sCell.x + 1, sCell.y)]);
-        if(sCell.y > 0) neighbours.Add(cellModels[GetIndex(sCell.x, sCell.y - 1)]);
-        if(sCell.y < rowCount - 1) neighbours.Add(cellModels[GetIndex(sCell.x, sCell.y + 1)]);
+        if(sCell.x > 0) neighbours.Add(cells[GetIndex(sCell.x - 1, sCell.y)].Model);
+        if(sCell.x < columnCount - 1) neighbours.Add(cells[GetIndex(sCell.x + 1, sCell.y)].Model);
+        if(sCell.y > 0) neighbours.Add(cells[GetIndex(sCell.x, sCell.y - 1)].Model);
+        if(sCell.y < rowCount - 1) neighbours.Add(cells[GetIndex(sCell.x, sCell.y + 1)].Model);
         return neighbours.ToArray();
     }
 
@@ -145,7 +141,7 @@ public class SquareMazeView : MazeViewBase
 
     public override CellModelBase GetRandomCell()
     {
-        return cellModels[GetIndex(URandom.Range(0, columnCount), URandom.Range(0, rowCount))];
+        return cells[GetIndex(URandom.Range(0, columnCount), URandom.Range(0, rowCount))].Model;
     }
 
     // public void CreateCycle()
