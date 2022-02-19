@@ -47,7 +47,7 @@ Shader "Unlit/GridTex"
             fixed4 frag (v2f i) : SV_Target
             {
                 fixed4 col = tex2D(_MainTex, i.uv);
-                col.rgb = col.rgb * _MainColor.rgb;
+                col.rgb = col.rgb * _MainColor.rgb * col.b;
                 return col;
             }
             ENDCG

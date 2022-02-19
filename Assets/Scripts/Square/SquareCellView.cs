@@ -64,4 +64,16 @@ public class SquareCellView : MonoBehaviour
     {
         renderer.material.SetTexture("_MainTex", gridTexs[(int)(~ways) & 0xf]);
     }
+
+    public void SetSolution(bool isSolution)
+    {
+        Model.IsSolution = isSolution;
+        if (isSolution)
+        {
+            renderer.material.SetColor("_MainColor", new Color(0.5f, 0.8f, 0.5f));
+        }else
+        {
+            renderer.material.SetColor("_MainColor", Color.white);
+        }
+    }
 }

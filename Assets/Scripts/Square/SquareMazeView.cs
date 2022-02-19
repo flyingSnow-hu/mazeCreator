@@ -68,6 +68,17 @@ public class SquareMazeView : MazeViewBase
         return neighbours.ToArray();
     }
 
+    public override CellModelBase[] GetConnectedNeighbours(CellModelBase cell)
+    {
+        var sCell = (SquareCellModel)cell;
+        var neighbours = new List<CellModelBase>(4);
+        if(sCell.x > 0 && (sCell.Way & Direction.Left) != Direction.None) neighbours.Add(cells[GetIndex(sCell.x - 1, sCell.y)].Model);
+        if(sCell.x < columnCount - 1 && (sCell.Way & Direction.Right) != Direction.None) neighbours.Add(cells[GetIndex(sCell.x + 1, sCell.y)].Model);
+        if(sCell.y > 0 && (sCell.Way & Direction.Bottom) != Direction.None) neighbours.Add(cells[GetIndex(sCell.x, sCell.y - 1)].Model);
+        if(sCell.y < rowCount - 1 && (sCell.Way & Direction.Top) != Direction.None) neighbours.Add(cells[GetIndex(sCell.x, sCell.y + 1)].Model);
+        return neighbours.ToArray();
+    }
+
     public override void AddWay(CellModelBase cell1, CellModelBase cell2)
     {
         var sCell1 = (SquareCellModel)cell1;
@@ -102,46 +113,25 @@ public class SquareMazeView : MazeViewBase
         cells[GetIndex(cellModel.x, cellModel.y)].SetWays(cellModel.Way);
     }
 
-    public void OnSolveClick()
-    {
-        // x, y, direction
-        // LinkedList<CellModelBase> gridLinkedList = new LinkedList<CellModelBase>();
-        // gridLinkedList.AddLast(cellModels[0]);
-        // while(gridLinkedList.Count > 0)
-        // {
-        //     var last = gridLinkedList.Last.Value;
-        //     if(last.x == columnCount - 1 && last.y == rowCount - 1) return;
-
-        //     var grid = cells[last.x + last.y * columnCount];
-        //     var way = (Direction)last.z;
-        //     while(way <= Direction.Bottom)
-        //     {
-        //         if ((grid.Ways & way) != Direction.None) 
-        //         {
-        //             var direction = Directions.Bound2Direction(way);
-        //             int newX = last.x + direction.x, newY = last.y + direction.y;
-        //             if (cells[newX + newY * columnCount].state == CellState.Connected)
-        //             {
-        //                 last.z = (int)way; gridLinkedList.Last.Value = last;
-        //                 gridLinkedList.AddLast(new Vector3Int(newX, newY, 1));
-        //                 cells[newX + newY * columnCount].state = CellState.Solution;
-        //                 goto OuterLoop;
-        //             }
-        //         }
-        //         way = (Direction)((int)way << 1);
-        //     }
-
-        //     // 回溯
-        //     gridLinkedList.RemoveLast();
-        //     grid.state = CellState.NotSolution;
-
-        //     OuterLoop:;
-        // }
-    }
-
     public override CellModelBase GetRandomCell()
     {
         return cells[GetIndex(URandom.Range(0, columnCount), URandom.Range(0, rowCount))].Model;
+    }
+
+    public override CellModelBase GetStart()
+    {
+        return cells[0].Model;
+    }
+
+    public override CellModelBase GetEnd()
+    {
+        return cells[cells.Count - 1].Model;
+    }
+
+    public override void SetSolution(CellModelBase cellModel, bool isSolution)
+    {
+        var sCell = (SquareCellModel)cellModel;
+        cells[GetIndex(sCell.x, sCell.y)].SetSolution(isSolution);
     }
 
     // public void CreateCycle()

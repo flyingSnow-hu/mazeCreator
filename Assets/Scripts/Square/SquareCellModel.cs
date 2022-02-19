@@ -3,7 +3,6 @@ public class SquareCellModel : CellModelBase
     public int x { get; private set; }
     public int y { get; private set; }
     public Direction Way { get; private set; } = Direction.None;
-    
 
 
     public SquareCellModel(int x, int y)
